@@ -1,0 +1,43 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+pydantic-settings==2.6.1
+httpx==0.28.1
+openai==1.54.0
+websockets==13.1
+aiofiles==24.1.0
+python-multipart==0.0.18
+python-dotenv==1.0.1
+pytest==8.3.3
+pytest-asyncio==0.23.8
+pytest-cov==6.0.0
+
+python-socketio==5.16.4
+prometheus-client==0.20.0
+structlog==24.4.0
+google-genai==2.23.0
+
+# Fleet tunnel wire protocol, shared with ../gateway (see ../protocol) -
+# this worker's only auth mechanism now (relay tokens verified against
+# the shared secret established at `molly worker enroll`); brings in its
+# own pydantic/pyjwt requirement.
+-e ../protocol
+
+# AST editing
+tree-sitter==0.26.0
+tree-sitter-python==0.25.0
+tree-sitter-javascript==0.25.0
+tree-sitter-typescript==0.23.2
+tree-sitter-go==0.25.0
+tree-sitter-rust==0.24.2
+
+# CLI
+rich==13.9.0
+click==8.1.7
+
+# Image processing
+pillow==10.3.0
+psutil==7.2.2
+
+# Document extraction
+pypdf==5.1.0

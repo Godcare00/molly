@@ -1,0 +1,23 @@
+{
+  "id": "apklab",
+  "name": "APKLab",
+  "path": "/var/www/apklab",
+  "description": "APK analysis tool",
+  "stack": [
+    "Python",
+    "FastAPI",
+    "Redis"
+  ],
+  "repository": "https://github.com/example/apklab",
+  "branch": "main",
+  "environment": "staging",
+  "services": [
+    "redis",
+    "apklab-api"
+  ],
+  "commands": {
+    "dev": "uvicorn main:app --reload",
+    "test": "pytest"
+  },
+  "notes": []
+}

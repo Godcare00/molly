@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Molly",
+    "slug": "molly",
+    "scheme": "molly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0D12",
+    "icon": "./assets/icon.png",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.molly.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Molly needs microphone access for hands-free voice mode, so you can talk to her without typing."
+      }
+    },
+    "android": {
+      "package": "com.molly.app",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0D12"
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Molly needs access to your photos so you can share screenshots and diagrams in chat.",
+          "cameraPermission": "Molly needs camera access so you can capture and share photos in chat."
+        }
+      ],
+      [
+        "react-native-audio-api",
+        {
+          "iosBackgroundMode": false,
+          "microphonePermissionText": "Molly needs microphone access for hands-free voice mode, so you can talk to her without typing."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "bcab9b6d-876c-4fcb-9e61-c8f1544df7c8"
+      }
+    },
+    "owner": "godcare0",
+    "newArchEnabled": true
+  }
+}

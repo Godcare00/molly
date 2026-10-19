@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: molly-tunnel-protocol
+Version: 0.1.0
+Summary: Wire protocol and relay-token helpers shared by the Molly worker and gateway
+Requires-Python: >=3.10
+Requires-Dist: pydantic>=2
+Requires-Dist: pyjwt>=2

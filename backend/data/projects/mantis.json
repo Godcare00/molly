@@ -1,0 +1,28 @@
+{
+  "id": "mantis",
+  "name": "Mantis",
+  "path": "/var/www/mantis",
+  "description": "Main production application",
+  "stack": [
+    "Next.js",
+    "FastAPI",
+    "PostgreSQL"
+  ],
+  "repository": "https://github.com/example/mantis",
+  "branch": "main",
+  "environment": "production",
+  "services": [
+    "nginx",
+    "postgresql",
+    "mantis-api",
+    "mantis-worker"
+  ],
+  "commands": {
+    "dev": "npm run dev",
+    "test": "pytest",
+    "build": "npm run build"
+  },
+  "notes": [
+    "Production deployment at /var/www/mantis"
+  ]
+}
