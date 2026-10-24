@@ -3,9 +3,32 @@
 // for request/response shapes across the app.
 
 export type Platform = 'ios' | 'android' | 'desktop' | 'web';
-export type UserRole = 'operator' | 'viewer' | 'admin';
+export type UserRole = 'operator' | 'viewer' | 'admin' | 'member';
 
 // ---------- Auth / devices ----------
+
+/** Fleet pairing: a one-time code printed by `molly connect` on the worker. */
+export interface PairRequest {
+  code: string;
+  name?: string;
+  platform?: string;
+}
+
+export interface PairResponse extends TokenPair {
+  /** The worker this device's traffic is proxied to (gateway fleet mode). */
+  default_worker_id: string;
+}
+
+/** Raw shape returned by the gateway's /auth/me (fleet mode). */
+export interface GatewayMeResponse {
+  tenant_id: string;
+  device_id: string;
+  device_name: string;
+  user_id: string | null;
+  email: string | null;
+  role: string;
+  default_worker_id: string | null;
+}
 
 export interface DeviceRegisterRequest {
   public_key: string; // Ed25519 public key, PEM (SPKI)

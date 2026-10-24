@@ -107,10 +107,17 @@ interface RequestOptions {
   auth?: boolean; // defaults to true
   isForm?: boolean;
   signal?: AbortSignal;
+  /**
+   * Set for endpoints the gateway itself answers (/auth/me, /auth/logout,
+   * /devices/pair, /auth/refresh). Without it, a signed-in session's
+   * worker id gets prefixed and the request is proxied to the worker,
+   * which has no such routes.
+   */
+  gatewayNative?: boolean;
 }
 
-function buildUrl(path: string, query?: RequestOptions['query']) {
-  const url = new URL(workerPathPrefix() + path, API_BASE_URL);
+function buildUrl(path: string, query?: RequestOptions['query'], gatewayNative = false) {
+  const url = new URL((gatewayNative ? '' : workerPathPrefix()) + path, API_BASE_URL);
   if (query) {
     Object.entries(query).forEach(([k, v]) => {
       if (v !== undefined) url.searchParams.set(k, String(v));
@@ -120,7 +127,7 @@ function buildUrl(path: string, query?: RequestOptions['query']) {
 }
 
 async function request<T>(path: string, options: RequestOptions = {}, isRetry = false): Promise<T> {
-  const { method = 'GET', body, query, auth = true, isForm = false, signal } = options;
+  const { method = 'GET', body, query, auth = true, isForm = false, signal, gatewayNative = false } = options;
 
   const headers: Record<string, string> = {};
   if (!isForm) headers['Content-Type'] = 'application/json';
@@ -132,7 +139,7 @@ async function request<T>(path: string, options: RequestOptions = {}, isRetry = 
 
   let response: Response;
   try {
-    response = await fetch(buildUrl(path, query), {
+    response = await fetch(buildUrl(path, query, gatewayNative), {
       method,
       headers,
       body: body === undefined ? undefined : isForm ? (body as FormData) : JSON.stringify(body),
