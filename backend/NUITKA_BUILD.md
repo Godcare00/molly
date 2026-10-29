@@ -33,7 +33,10 @@ sudo ./deploy.sh /path/to/cli.dist    # or point at a build produced elsewhere
 
 This installs the compiled tree under `/var/www/molly/backend`, wires
 a systemd unit that runs `molly serve` directly (no interpreter, no
-venv activation), and prints the enrollment/pairing steps.
+venv activation), and installs `/usr/local/bin/molly` as a wrapper that
+runs the binary from the deployment directory. That makes `molly connect`,
+`molly worker enroll`, and the other admin commands work from any shell
+without `cd`-ing into `/var/www/molly/backend` or activating a venv.
 
 ## What changed to make this work
 
@@ -114,5 +117,6 @@ specific to this project.
 cd dist/cli.dist
 cp /path/to/real/.env .        # or a throwaway test .env
 ./molly projects               # exercises app.config, app.storage - no server needed
+./molly connect                # prints a pairing code when this dir has data/gateway_credential.json
 ./molly serve                  # then hit http://127.0.0.1:8000/ in another shell
 ```

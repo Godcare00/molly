@@ -35,11 +35,11 @@ if [ ! -x "$BUILD_DIST_DIR/molly" ]; then
     exit 1
 fi
 
-# Install system dependencies (git only - no python3/pip/venv needed at
+# Install the few system tools deploy needs (no python3/pip/venv at
 # runtime anymore; the compiled binary is self-contained)
 echo "Installing system dependencies..."
 apt-get update
-apt-get install -y git
+apt-get install -y git rsync
 
 # Create molly user
 if ! id "$MOLLY_USER" &>/dev/null; then
@@ -47,11 +47,14 @@ if ! id "$MOLLY_USER" &>/dev/null; then
     useradd -r -s /bin/bash -d "$MOLLY_DIR" "$MOLLY_USER"
 fi
 
-# Create directories
+# Create directories. The backend resolves data paths relative to its
+# WorkingDirectory (the backend dir), so credentials, SQLite, projects, and
+# uploads all live under backend/data/ - not a sibling of backend/.
 echo "Creating directories..."
 mkdir -p "$MOLLY_BACKEND_DIR"
-mkdir -p "$MOLLY_DIR/data/projects"
-mkdir -p "$MOLLY_DIR/data/uploads"
+mkdir -p "$MOLLY_BACKEND_DIR/data/projects"
+mkdir -p "$MOLLY_BACKEND_DIR/data/uploads"
+mkdir -p "$MOLLY_BACKEND_DIR/data/skills"
 mkdir -p "$MOLLY_DIR/logs"
 
 # Copy the compiled standalone build into place. This replaces whatever
@@ -63,6 +66,16 @@ rsync -a --delete --exclude='.env' --exclude='data' --exclude='logs' \
 
 # Set ownership
 chown -R "$MOLLY_USER:$MOLLY_USER" "$MOLLY_DIR"
+
+# Make `molly connect` / `molly worker ...` usable from any directory.
+# The CLI resolves .env and data/ relative to the working directory, so the
+# wrapper enters the deployment directory before exec'ing the binary.
+cat > /usr/local/bin/molly <<'MOLLY_WRAPPER'
+#!/bin/sh
+cd /var/www/molly/backend || exit 1
+exec ./molly "$@"
+MOLLY_WRAPPER
+chmod 0755 /usr/local/bin/molly
 
 # Create .env if not exists
 if [ ! -f "$MOLLY_BACKEND_DIR/.env" ]; then
@@ -97,7 +110,7 @@ StandardError=journal
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
-ReadWritePaths=$MOLLY_DIR/data $MOLLY_DIR/logs
+ReadWritePaths=$MOLLY_BACKEND_DIR/data $MOLLY_DIR/logs
 
 [Install]
 WantedBy=multi-user.target
@@ -122,12 +135,12 @@ echo "2. Enroll this worker with the fleet gateway (required - this worker"
 echo "   won't accept any authenticated request until it is). The gateway"
 echo "   URL is baked in via settings.gateway_http_url, so this only needs"
 echo "   a token:"
-echo "     $MOLLY_BACKEND_DIR/molly worker enroll --token <enrollment_token>"
+echo "     sudo -u $MOLLY_USER molly worker enroll --token <enrollment_token>"
 echo "   Get <enrollment_token> from the gateway admin:"
 echo "     curl -X POST https://your-gateway.example.com/admin/workers/tokens \\"
 echo "       -H \"X-API-Key: <your_tenant_api_key>\""
 echo "3. Restart once more so it picks up the saved credential:"
 echo "   systemctl restart molly"
 echo "4. Pair a device from the Molly app:"
-echo "   sudo -u $MOLLY_USER $MOLLY_BACKEND_DIR/molly connect"
+echo "   sudo -u $MOLLY_USER molly connect"
 echo "5. Check logs: journalctl -u molly -f"

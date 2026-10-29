@@ -81,6 +81,10 @@ python -m nuitka \
     --assume-yes-for-downloads \
     app/cli.py
 
+# deploy.sh uses this to seed a fresh deployment's .env; Nuitka's output
+# contains only Python modules/native libs, not repo-side config templates.
+cp "$BACKEND_DIR/.env.example" "$DIST_DIR/cli.dist/.env.example"
+
 deactivate
 
 echo ""

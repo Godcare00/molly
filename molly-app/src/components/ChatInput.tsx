@@ -4,7 +4,6 @@ import * as ImagePicker from 'expo-image-picker';
 import * as DocumentPicker from 'expo-document-picker';
 import { Feather } from '@expo/vector-icons';
 import { BorderBeam } from './BorderBeam';
-import { MetalFx } from './MetalFx';
 import { AttachMenu } from './AttachMenu';
 import { Liquid } from './Liquid';
 import { ImagePreview } from './ImagePreview';
@@ -153,7 +152,6 @@ export function ChatInput({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
-        <MetalFx variant="circle" theme="light" innerShadow paused={disabled || (!text.trim() && !hasAttachments)}>
         <Pressable
           onPress={submit}
           disabled={disabled || (!text.trim() && !hasAttachments)}
@@ -168,7 +166,6 @@ export function ChatInput({
             color={disabled || (!text.trim() && !hasAttachments) ? color.textTertiary : color.white}
           />
         </Pressable>
-        </MetalFx>
       </View>
       </BorderBeam>
       </View>
@@ -214,7 +211,6 @@ const styles = StyleSheet.create({
     backgroundColor: color.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    ...shadow.accentPill,
   },
   sendButtonDisabled: { backgroundColor: color.surfaceHigh },
 });

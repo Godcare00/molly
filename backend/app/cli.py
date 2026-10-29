@@ -1,6 +1,7 @@
 import asyncio
 import sys
 from typing import Optional
+from urllib.parse import urlsplit
 import click
 import httpx
 from rich.console import Console
@@ -141,6 +142,26 @@ def connect():
     asyncio.run(_connect())
 
 
+def _gateway_http_url(cred: dict) -> str:
+    """Return the gateway's HTTP base URL from an enrollment credential.
+
+    New enrollments save ``gateway_http_url`` directly. Older credential
+    files only saved the WebSocket URL, so derive the HTTP base from it
+    instead of making the operator re-enroll just to print a pairing code.
+    """
+    explicit = (cred.get("gateway_http_url") or "").strip().rstrip("/")
+    if explicit:
+        return explicit
+
+    ws_url = (cred.get("gateway_ws_url") or settings.gateway_ws_url or "").strip()
+    parts = urlsplit(ws_url)
+    if not parts.netloc:
+        return ""
+
+    scheme = "https" if parts.scheme in ("wss", "https") else "http"
+    return f"{scheme}://{parts.netloc}"
+
+
 async def _connect():
     from app.tunnel.enrollment import load_credential
 
@@ -152,7 +173,7 @@ async def _connect():
         )
         return
 
-    gateway_http_url = cred.get("gateway_http_url", "")
+    gateway_http_url = _gateway_http_url(cred)
     if not gateway_http_url:
         console.print("[red]No gateway URL on file. Re-run `molly worker enroll` with --gateway.[/red]")
         return

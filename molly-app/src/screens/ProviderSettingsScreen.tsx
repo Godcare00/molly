@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, Pressable, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -120,66 +120,72 @@ export function ProviderSettingsScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={[type.caption, styles.hint]}>
-          The first provider is tried for every request. If it fails after its retries, Molly
-          automatically moves to the next one in the list.
-        </Text>
-
-        {providers.map((entry, index) => (
-          <ProviderCard
-            key={index}
-            entry={entry}
-            index={index}
-            isFirst={index === 0}
-            isLast={index === providers.length - 1}
-            canRemove={providers.length > 1}
-            expanded={expanded === index}
-            testing={testingIndex === index}
-            onToggle={() => setExpanded(expanded === index ? null : index)}
-            onChange={(patch) => updateEntry(index, patch)}
-            onMoveUp={() => moveProvider(index, -1)}
-            onMoveDown={() => moveProvider(index, 1)}
-            onRemove={() => removeProvider(index)}
-            onTest={() => testProvider(index)}
-          />
-        ))}
-
-        <Pressable style={styles.addRow} onPress={addProvider}>
-          <Feather name="plus" size={18} color={color.accent} />
-          <Text style={[type.bodyMedium, styles.addLabel]}>Add fallback provider</Text>
-        </Pressable>
-
-        <View style={styles.retrySection}>
-          <Text style={[type.h2, styles.sectionTitle]}>Retry behavior</Text>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <Text style={[type.caption, styles.hint]}>
-            Applied to each provider before Molly moves on to the next one.
+            The first provider is tried for every request. If it fails after its retries, Molly
+            automatically moves to the next one in the list.
           </Text>
-          <View style={styles.retryRow}>
-            <RetryField
-              label="Max retries"
-              value={String(retry.max_retries)}
-              onChangeText={(v) => setRetry((prev) => ({ ...prev, max_retries: Math.max(0, Number(v) || 0) }))}
-            />
-            <RetryField
-              label="Base delay (s)"
-              value={String(retry.retry_base_delay_seconds)}
-              onChangeText={(v) =>
-                setRetry((prev) => ({ ...prev, retry_base_delay_seconds: Math.max(0, Number(v) || 0) }))
-              }
-            />
-            <RetryField
-              label="Max delay (s)"
-              value={String(retry.retry_max_delay_seconds)}
-              onChangeText={(v) =>
-                setRetry((prev) => ({ ...prev, retry_max_delay_seconds: Math.max(0, Number(v) || 0) }))
-              }
-            />
-          </View>
-        </View>
 
-        <Button label="Save" onPress={save} loading={saving} style={{ marginTop: spacing.lg }} />
-      </ScrollView>
+          {providers.map((entry, index) => (
+            <ProviderCard
+              key={index}
+              entry={entry}
+              index={index}
+              isFirst={index === 0}
+              isLast={index === providers.length - 1}
+              canRemove={providers.length > 1}
+              expanded={expanded === index}
+              testing={testingIndex === index}
+              onToggle={() => setExpanded(expanded === index ? null : index)}
+              onChange={(patch) => updateEntry(index, patch)}
+              onMoveUp={() => moveProvider(index, -1)}
+              onMoveDown={() => moveProvider(index, 1)}
+              onRemove={() => removeProvider(index)}
+              onTest={() => testProvider(index)}
+            />
+          ))}
+
+          <Pressable style={styles.addRow} onPress={addProvider}>
+            <Feather name="plus" size={18} color={color.accent} />
+            <Text style={[type.bodyMedium, styles.addLabel]}>Add fallback provider</Text>
+          </Pressable>
+
+          <View style={styles.retrySection}>
+            <Text style={[type.h2, styles.sectionTitle]}>Retry behavior</Text>
+            <Text style={[type.caption, styles.hint]}>
+              Applied to each provider before Molly moves on to the next one.
+            </Text>
+            <View style={styles.retryRow}>
+              <RetryField
+                label="Max retries"
+                value={String(retry.max_retries)}
+                onChangeText={(v) => setRetry((prev) => ({ ...prev, max_retries: Math.max(0, Number(v) || 0) }))}
+              />
+              <RetryField
+                label="Base delay (s)"
+                value={String(retry.retry_base_delay_seconds)}
+                onChangeText={(v) =>
+                  setRetry((prev) => ({ ...prev, retry_base_delay_seconds: Math.max(0, Number(v) || 0) }))
+                }
+              />
+              <RetryField
+                label="Max delay (s)"
+                value={String(retry.retry_max_delay_seconds)}
+                onChangeText={(v) =>
+                  setRetry((prev) => ({ ...prev, retry_max_delay_seconds: Math.max(0, Number(v) || 0) }))
+                }
+              />
+            </View>
+          </View>
+
+          <Button label="Save" onPress={save} loading={saving} style={{ marginTop: spacing.lg }} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -313,6 +319,7 @@ function RetryField({
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  flex: { flex: 1 },
   header: {
     flexDirection: 'row',
     alignItems: 'center',

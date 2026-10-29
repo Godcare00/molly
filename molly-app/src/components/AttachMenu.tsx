@@ -86,8 +86,14 @@ export function AttachMenu({
 }
 
 const styles = StyleSheet.create({
-  // Left edge lines the first droplet up over the + button (16 gutter + 8 inset + 18 half - 23 half).
-  wrap: { height: H, marginLeft: spacing.lg + spacing.sm + 18 - BTN / 2, marginBottom: -spacing.sm - 6 },
+  // The menu already lives inside ChatInput's 16pt gutter. The + centre is
+  // 8pt (row inset) + 18pt (half of the 36pt button) from the content edge,
+  // and the input row's + centre is 22pt below the menu's overlap point.
+  wrap: {
+    height: H,
+    marginLeft: spacing.sm + 18 - BTN / 2,
+    marginBottom: -(BTN / 2 + 22),
+  },
   liquid: { flex: 1 },
   slot: { position: 'absolute', left: 0, top: H - BTN, width: BTN, height: BTN },
   btn: { width: BTN, height: BTN, borderRadius: BTN / 2, alignItems: 'center', justifyContent: 'center' },

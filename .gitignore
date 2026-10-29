@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 venv/
 .venv/
+.nuitka-build-venv/
 
 # Node / Expo
 node_modules/

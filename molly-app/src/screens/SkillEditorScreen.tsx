@@ -117,8 +117,8 @@ export function SkillEditorScreen() {
       ) : (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={16}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 16 : 0}
         >
           <ScrollView contentContainerStyle={styles.form} keyboardShouldPersistTaps="handled">
             {isNew ? (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -32,67 +32,74 @@ export function PairingScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScreenGradient />
-      <Hero height={260} />
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
+        <Hero height={260} />
 
-      <View style={styles.content}>
-        <Text style={[type.title, styles.title]}>Molly</Text>
-        <Text style={[type.body, styles.subtitle]}>Your VPS, under your control.</Text>
+        <View style={styles.content}>
+          <Text style={[type.title, styles.title]}>Molly</Text>
+          <Text style={[type.body, styles.subtitle]}>Your VPS, under your control.</Text>
 
-        <View style={styles.features}>
-          {FEATURES.map((f) => (
-            <View key={f.label} style={styles.featureRow}>
-              <View style={styles.featureIconWrap}>
-                <LinearGradient
-                  colors={gradient.accentSoft}
-                  style={StyleSheet.absoluteFill}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                />
-                <Feather name={f.icon} size={16} color={color.accent} />
+          <View style={styles.features}>
+            {FEATURES.map((f) => (
+              <View key={f.label} style={styles.featureRow}>
+                <View style={styles.featureIconWrap}>
+                  <LinearGradient
+                    colors={gradient.accentSoft}
+                    style={StyleSheet.absoluteFill}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                  />
+                  <Feather name={f.icon} size={16} color={color.accent} />
+                </View>
+                <Text style={[type.body, styles.featureLabel]}>{f.label}</Text>
               </View>
-              <Text style={[type.body, styles.featureLabel]}>{f.label}</Text>
-            </View>
-          ))}
+            ))}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.footer}>
-        <Text style={[type.caption, styles.hint]}>
-          Run <Text style={styles.mono}>molly connect</Text> on your server, then enter the code it prints.
-        </Text>
+        <View style={styles.footer}>
+          <Text style={[type.caption, styles.hint]}>
+            Run <Text style={styles.mono}>molly connect</Text> on your server, then enter the code it prints.
+          </Text>
 
-        <TextInput
-          value={code}
-          onChangeText={setCode}
-          placeholder="PAIRING CODE"
-          placeholderTextColor={color.textTertiary}
-          autoCapitalize="characters"
-          autoCorrect={false}
-          autoComplete="off"
-          maxLength={8}
-          editable={!pairing}
-          returnKeyType="go"
-          onSubmitEditing={submit}
-          style={[type.body, styles.input]}
-        />
+          <TextInput
+            value={code}
+            onChangeText={setCode}
+            placeholder="PAIRING CODE"
+            placeholderTextColor={color.textTertiary}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            autoComplete="off"
+            maxLength={8}
+            editable={!pairing}
+            returnKeyType="go"
+            onSubmitEditing={submit}
+            style={[type.body, styles.input]}
+          />
 
-        {pairingError ? <Text style={[type.caption, styles.error]}>{pairingError}</Text> : null}
+          {pairingError ? <Text style={[type.caption, styles.error]}>{pairingError}</Text> : null}
 
-        <Button
-          label="Connect"
-          onPress={submit}
-          loading={pairing}
-          disabled={clean.length < 6}
-          variant="white"
-        />
-        {pairing ? <Button label="Cancel" onPress={cancelPairing} variant="secondary" /> : null}
-      </View>
+          <Button
+            label="Connect"
+            onPress={submit}
+            loading={pairing}
+            disabled={clean.length < 6}
+            variant="white"
+          />
+          {pairing ? <Button label="Cancel" onPress={cancelPairing} variant="secondary" /> : null}
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  flex: { flex: 1 },
   content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xxl, gap: spacing.lg },
   title: { color: color.textPrimary, textAlign: 'center' },
   subtitle: { color: color.textSecondary, marginBottom: spacing.md, textAlign: 'center' },

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 import { useAuth } from '@/context/AuthContext';
 import { useTypography } from '@/context/TypographyContext';
 import { Avatar } from '@/components/Avatar';
@@ -40,6 +41,9 @@ export function SettingsScreen() {
     <SafeAreaView style={styles.container}>
       <ScreenGradient />
       <View style={styles.header}>
+        <Pressable onPress={() => navigation.goBack()} hitSlop={8} accessibilityLabel="Back">
+          <Feather name="chevron-left" size={24} color={color.textPrimary} />
+        </Pressable>
         <Text style={[type.title, styles.title]}>Settings</Text>
       </View>
 
@@ -77,7 +81,14 @@ export function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.lg },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+  },
   title: { color: color.textPrimary },
   scroll: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxl, gap: spacing.lg },
   profileCard: {
